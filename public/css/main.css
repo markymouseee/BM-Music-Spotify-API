@@ -1,0 +1,40 @@
+body{
+    font-family: 'Poppins', sans-serif;
+}
+
+@keyframes slideUpFade {
+    from {
+        transform: translateY(60px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-slide-up {
+    animation: slideUpFade 0.4s ease-out forwards;
+    animation-delay: 0.2s;
+}
+
+a.sign-up-link{
+    color: #ffffff;
+    text-decoration: none;
+}
+
+a.sign-up-link:hover {
+    text-decoration: underline;
+    color: #bdbdbd;
+}
+
+a.sign-up-link:hover:active {
+    color: #ffffff;
+}
+
+a.sign-up-link:active {
+    color: #ffffff;
+}
+a.sign-up-link:active:focus {
+    color: #ffffff;
+}

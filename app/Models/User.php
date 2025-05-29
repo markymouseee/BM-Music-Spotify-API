@@ -18,7 +18,11 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'spotify_id',
+        'spotify_access_token',
+        'spotify_refresh_token',
         'name',
+        'username',
         'email',
         'password',
     ];
@@ -41,6 +45,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'spotify_token_expires_at' => 'datetime',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
