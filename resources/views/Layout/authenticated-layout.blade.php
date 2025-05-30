@@ -4,7 +4,7 @@
     <nav class="navbar navbar-expand-lg position-sticky top-0 shadow-sm"
         style="background-color: rgba(34, 40, 49, 0.85); backdrop-filter: blur(5px); z-index: 1030;">
         <div class="container">
-            <a class="navbar-brand text-light fw-bold fs-4" href="#">
+            <a class="navbar-brand text-light fw-bold fs-4" href="/">
                 <svg width="40px" height="40px" viewBox="0 0 1024 1024" class="icon" version="1.1"
                     xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -22,63 +22,57 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            Dropdown
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
+            <div class="collapse navbar-collapse" id="navbarNav">
 
-                </ul>
-                <form class="d-flex ms-5" role="search">
-                    <input class="form-control me-2" type="search" placeholder="Search song" aria-label="Search">
-                    <button class="btn btn-success" type="submit">Search</button>
-                </form>
-            </div>
-            <div class="dropdown cursor-pointer ms-2">
-                <a class="nav-link text-light d-flex align-items-center dropdown-toggle " data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    <img src="{{ asset('images/img.jpg') }}" alt="admin" class="rounded-circle" height="40"
-                        width="40">
-                    <strong class="ms-2">Mark</strong>
-                </a>
+                <div class="d-flex ms-auto" role="search">
+                    <input class="form-control me-2" type="search" id="search-query" placeholder="Search song"
+                        aria-label="Search">
+                    <button class="btn btn-outline-light" id="search-btn" type="submit">Search</button>
+                </div>
+                <div class="dropdown cursor-pointer ms-2">
+                    <a class="nav-link text-light d-flex align-items-center dropdown-toggle " data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <img src="{{ asset('images/img.jpg') }}" alt="admin" class="rounded-circle" height="40"
+                            width="40">
+                        <strong class="ms-2">Mark</strong>
+                    </a>
 
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                    <li>
-                        <hr class="dropdown-divider">
-                    </li>
-                    <li>
-                        <button class="dropdown-item text-danger" id="btn-logout">Log out</button>
-                    </li>
-                </ul>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-person-circle"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="bi bi-bookmark"></i>
+                                Saved tracks
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <button class="dropdown-item text-danger" id="btn-logout">
+                                <i class="bi bi-box-arrow-right"></i>
+                                Log out
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
+
         </div>
     </nav>
 
-    <main class="flex-fill d-flex justify-content-center align-items-center py-5 ">
+    <main class="flex-fill d-flex justify-content-center align-items-center py-5 overflow-auto"
+        style="background-image:  linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url({{ asset('images/guestbackground.jpeg') }}); background-size: cover; background-repeat: no-repeat; background-position: center;">
         @yield('main-content')
+
     </main>
 
-    <footer class="text-center
-        text-light py-3 mt-auto"
+    <footer class="text-center text-light py-3"
         style="background-color: rgba(34, 40, 49, 0.85); backdrop-filter: blur(5px);">
         <div>
             <small>&copy; <span id="year"></span> BM Music. All rights reserved.</small>
@@ -88,6 +82,7 @@
         $(document).ready(function() {
             handleLogout();
         });
+
 
         function handleLogout() {
             $("#btn-logout").on('click', async function() {

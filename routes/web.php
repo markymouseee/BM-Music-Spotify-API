@@ -18,3 +18,9 @@ Route::get('/auth/spotify/callback', [SpotifyController::class, 'handleSpotifyCa
 
 Route::get('/spotify/top-tracks-ajax', [SpotifyController::class, 'fetchTopTracksAjax'])
     ->name('spotify.top-tracks.ajax');
+
+Route::get('/spotify/search', [SpotifyController::class, 'search'])
+    ->name('spotify.search');
+
+Route::post('/spotify/save-track', [SpotifyController::class, 'saveTrack'])
+    ->name('spotify.save.track');

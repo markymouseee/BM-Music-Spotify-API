@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SavedTrack;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -21,6 +22,59 @@ class SpotifyController extends Controller
 
         return redirect("https://accounts.spotify.com/authorize?$query");
     }
+
+    public function search(Request $request)
+    {
+        $query = $request->query('query');
+        $token = Auth::user()->spotify_access_token;
+
+        $response = Http::withToken($token)->get('https://api.spotify.com/v1/search', [
+            'q' => $query,
+            'type' => 'track',
+            'limit' => 10,
+        ]);
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'tracks' => $response->json()['tracks']['items']
+            ]);
+        }
+
+        return response()->json(['success' => false], 500);
+    }
+
+    public function saveTrack(Request $request)
+    {
+        $request->validate([
+            'spotify_track_id' => 'required|string',
+            'track_name' => 'required|string',
+            'artist' => 'required|string',
+            'album_art' => 'nullable|string',
+        ]);
+
+        $user = Auth::user();
+
+
+        $exists = SavedTrack::where('user_id', $user->id)
+            ->where('spotify_track_id', $request->spotify_track_id)
+            ->exists();
+
+        if ($exists) {
+            return response()->json(['success' => false, 'message' => 'Track already saved.'], 409);
+        }
+
+        SavedTrack::create([
+            'user_id' => $user->id,
+            'spotify_track_id' => $request->spotify_track_id,
+            'track_name' => $request->track_name,
+            'artist' => $request->artist,
+            'album_art' => $request->album_art,
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Track saved!']);
+    }
+
 
     public function handleSpotifyCallback(Request $request)
     {
@@ -50,8 +104,8 @@ class SpotifyController extends Controller
             [
                 'name' => $spotifyUser['display_name'] ?? 'Spotify User',
                 'email' => $spotifyUser['email'],
-                'username' => $spotifyUser['id'], // Using Spotify ID as username
-                'password' => bcrypt(str(16)), // Generate a random password
+                'username' => $spotifyUser['id'],
+                'password' => bcrypt(str(16)),
                 'spotify_access_token' => $accessToken,
                 'spotify_refresh_token' => $refreshToken,
                 'spotify_token_expires_at' => now()->addSeconds($response->json()['expires_in']),
@@ -68,7 +122,6 @@ class SpotifyController extends Controller
     {
         $user = Auth::user();
 
-        // Check if access token exists
         if (!$user || !$user->spotify_access_token) {
             return response()->json([
                 'success' => false,
@@ -76,13 +129,11 @@ class SpotifyController extends Controller
             ], 400);
         }
 
-        // Make the request to Spotify API
         $response = Http::withToken($user->spotify_access_token)
             ->get('https://api.spotify.com/v1/me/top/tracks', [
                 'limit' => 12,
             ]);
 
-        // Debug logging
         if (!$response->successful()) {
             Log::error('Spotify API Error', [
                 'status' => $response->status(),
@@ -90,7 +141,6 @@ class SpotifyController extends Controller
             ]);
         }
 
-        // Handle response
         if ($response->successful()) {
             return response()->json([
                 'success' => true,
@@ -100,7 +150,7 @@ class SpotifyController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Spotify API error: ' . $response->status(),
-                'error' => json_decode($response->body(), true), // optional: show Spotify's error
+                'error' => json_decode($response->body(), true),
             ], 400);
         }
     }
@@ -108,7 +158,7 @@ class SpotifyController extends Controller
     public function playTrack(Request $request)
     {
         $user = Auth::user();
-        $trackUri = $request->input('track_uri'); // e.g. spotify:track:TRACK_ID
+        $trackUri = $request->input('track_uri');
 
         $response = Http::withToken($user->spotify_access_token)
             ->put('https://api.spotify.com/v1/me/player/play', [
