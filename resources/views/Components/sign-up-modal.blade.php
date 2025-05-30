@@ -29,35 +29,33 @@
                 <form id="signup-form">
                     @csrf
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="signup-fullname" name="username" required
-                            placeholder="">
+                        <input type="text" class="form-control" id="signup-fullname" name="name" placeholder="">
                         <label for="signup-username" class="form-label">Fullname</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="signup-username" name="email" required
-                            placeholder="">
+                        <input type="text" class="form-control" id="signup-username" name="username" placeholder="">
                         <label for="signup-email" class="form-label">Username</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="signup-email" name="email" required
-                            placeholder="">
+                        <input type="email" class="form-control" id="signup-email" name="email" placeholder="">
                         <label for="signup-email" class="form-label">Email address</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="signup-password" name="password" required
-                            placeholder="">
+                        <input type="password" class="form-control" id="signup-password" name="password" placeholder="">
                         <label for="signup-password" class="form-label">Password</label>
                     </div>
                     <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="signup-password" name="password" required
-                            placeholder="">
-                        <label for="signup-password" class="form-label">Re-type password</label>
+                        <input type="password" class="form-control" id="signup-password-confirmation"
+                            name="password_confirmation" placeholder="">
+                        <label for="signup-retype-password" class="form-label">Re-type password</label>
                     </div>
                     <p class="text-muted text-center" style="font-size: 15px;"> By continuing, you agree to our <a
                             href="">Terms</a> and <a href="">Privacy
                             Policy</a>.</p>
-                    <button type="submit" class="btn btn-dark w-100" style="border-radius: 50px;">
-                        <svg width="20" height="20" viewBox="0 0 32 32" version="1.1"
+                    <button type="submit" id="btn-sign-up" class="btn btn-dark w-100" style="border-radius: 50px;">
+                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+
+                        <svg id="icon" width="20" height="20" viewBox="0 0 32 32" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                             xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
                             <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"
@@ -102,3 +100,86 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(() => {
+        handleSignUp();
+    });
+
+    function handleSignUp() {
+        $('#signup-form').on('submit', async function(e) {
+            e.preventDefault();
+
+            Spinner($("#btn-sign-up"), true);
+
+            const formData = $(this).serializeArray().reduce((obj, item) => {
+                obj[item.name] = item.value;
+                return obj;
+            }, {});
+
+            try {
+                const response = await fetch("/api/register", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                    },
+                    body: JSON.stringify(formData)
+                })
+
+                const data = await response.json();
+                if (response.ok) {
+                    Spinner($("#btn-sign-up"), false);
+                    Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message,
+                        })
+                        .then((willDirect) => {
+                            if (willDirect.isConfirmed) {
+                                window.location.href = data.redirect
+                            }
+                        })
+
+                } else {
+                    if (data.errors) {
+                        Spinner($("#btn-sign-up"), false);
+                        Object.keys(data.errors).forEach(key => {
+                            const inputFields = $(`input[name="${key}"]`);
+
+                            if (inputFields.length) {
+                                inputFields.addClass('is-invalid');
+                                inputFields.next('.invalid-feedback').remove();
+                                inputFields.after(
+                                    `<div class="invalid-feedback">${data.errors[key][0]}</div>`
+                                );
+                            }
+                        })
+                    } else {
+                        Spinner($("#btn-sign-up"), false);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.message || 'An error occurred. Please try again later.',
+                        })
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Spinner($("#btn-sign-up"), false);
+            }
+        })
+    }
+
+    function Spinner(button, isLoading) {
+        button.prop('disabled', isLoading);
+        button.find('.spinner-border').toggleClass('d-none', !isLoading);
+        if (isLoading) {
+            button.text('Signing up...');
+        } else {
+            button.text('Sign Up');
+
+        }
+    }
+</script>
