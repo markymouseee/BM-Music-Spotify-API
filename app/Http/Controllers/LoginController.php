@@ -22,18 +22,18 @@ class LoginController extends Controller
     {
         $validation = $request->validate([
             'username_or_email' => 'required',
-            'password_login' => 'required',
+            'pass' => 'required',
         ], [
             'username_or_email.required' => 'Username or email is required.',
-            'password_login.required' => 'Password is required.',
+            'pass.required' => 'Password is required.',
         ]);
 
         $user = User::where('username', $validation['username_or_email'])
             ->orWhere('email', $validation['username_or_email'])
-            ->firstOrFail();
+            ->first();
 
         if ($user) {
-            if (Hash::check($validation['password_login'], $user->password)) {
+            if (Hash::check($validation['pass'], $user->password)) {
                 Auth::login($user);
                 return response()->json([
                     'message' => 'Login successfully.',
@@ -41,7 +41,7 @@ class LoginController extends Controller
                 ]);
             } else {
                 return response()->json([
-                    'message' => 'Incorrect password.'
+                    'message' => 'Password is incorrect.'
                 ]);
             }
         } else {

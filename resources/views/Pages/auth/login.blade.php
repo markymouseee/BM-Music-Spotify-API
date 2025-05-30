@@ -36,9 +36,9 @@
                     </div>
 
                     <div class="form-floating mb-4">
-                        <input type="password" name="password_login" class="form-control rounded-3 border-0 shadow-sm"
-                            id="password_login" placeholder="Password">
-                        <label for="password_login" class="text-secondary">Password</label>
+                        <input type="pass" name="pass" class="form-control rounded-3 border-0 shadow-sm"
+                            id="pass" placeholder="Pass">
+                        <label for="pass" class="text-secondary">Password</label>
                     </div>
 
                     <div class="d-grid">
@@ -109,13 +109,31 @@
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         body: JSON.stringify(formData)
                     })
 
                     const data = await res.json();
+                    if (data.message == "Username or email not found.") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Failed',
+                            text: 'Username or email not found.',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
 
+                    if (data.message == "Password is incorrect.") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Failed',
+                            text: 'Password is incorrect.',
+                            confirmButtonText: 'OK'
+                        });
+                        return;
+                    }
                     if (res.ok) {
                         window.location.href = data.redirect;
                     } else {
@@ -130,7 +148,6 @@
                             })
 
                         } else {
-                            console.log(data.message);
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Login Failed',

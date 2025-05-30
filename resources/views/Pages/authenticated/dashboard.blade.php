@@ -42,7 +42,7 @@
                 spotify_track_id: button.data('id'),
                 track_name: button.data('name'),
                 artist: button.data('artist'),
-                album_art: button.data('art')
+                album_art: button.data('image')
             };
 
             $.ajax({
@@ -78,47 +78,7 @@
             });
         });
 
-        $('#search-btn').on('click', function() {
-            const query = $('#search-query').val().trim();
-            if (!query) return;
 
-            $.ajax({
-                url: '/spotify/search',
-                method: 'GET',
-                data: {
-                    query
-                },
-                success: function(response) {
-                    if (response.success) {
-                        let html = '';
-                        response.tracks.forEach(track => {
-                            html += `
-                        <div class="col-md-4 col-lg-3">
-                            <div class="card text-bg-dark h-100 shadow-lg border-secondary rounded-4">
-                                <img src="${track.album.images[0]?.url}" class="card-img-top rounded-top-4" alt="Album Art">
-                                <div class="card-body">
-                                    <h5 class="card-title">${track.name}</h5>
-                                    <p class="card-text text-secondary">Artist: ${track.artists[0].name}</p>
-                                    <button class="btn btn-outline-light w-100 mb-2 play-track-btn" data-uri="${track.uri}"><i class="bi bi-play-circle-fill"></i> Play</button>
-                                    <button class="btn btn-outline-success w-100 save-track-btn"
-                                        data-id="${track.id}"
-                                        data-name="${track.name}"
-                                        data-artist="${track.artists[0].name}"
-                                        data-image="${track.album.images[0]?.url}">
-                                        <i class="bi bi-bookmark-fill"></i> Save
-                                    </button>
-                                </div>
-                            </div>
-                        </div>`;
-                        });
-                        $('#track-container').html(html);
-                    }
-                },
-                error: function() {
-                    alert('Search failed.');
-                }
-            });
-        });
 
         let player;
         let currentTrackDuration = 0;

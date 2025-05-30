@@ -24,3 +24,9 @@ Route::get('/spotify/search', [SpotifyController::class, 'search'])
 
 Route::post('/spotify/save-track', [SpotifyController::class, 'saveTrack'])
     ->name('spotify.save.track');
+
+Route::get('/spotify/saved-tracks',  [SpotifyController::class, 'showSavedTracks'])
+    ->name('spotify.saved.tracks');
+
+Route::delete('/spotify/saved-tracks/{id}', [SpotifyController::class, 'deleteSavedTrack'])
+    ->name('spotify.saved.track.delete');

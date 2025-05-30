@@ -45,6 +45,28 @@ class SpotifyController extends Controller
         return response()->json(['success' => false], 500);
     }
 
+    public function showSavedTracks()
+    {
+        $user = Auth::user();
+        $savedTracks = $user->savedTracks;
+        $spotifyAccessToken = $user->spotify_access_token; // Assuming a hasMany relationship
+
+        return view('pages.authenticated.savetrack', compact('savedTracks', 'spotifyAccessToken'));
+    }
+
+    public function deleteSavedTrack($id)
+    {
+        $user = Auth::user();
+        $track = SavedTrack::where('user_id', $user->id)->findOrFail($id);
+
+        if ($track) {
+            $track->delete();
+            return response()->json(['success' => true, 'message' => 'Track deleted successfully.']);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Track not found.'], 404);
+    }
+
     public function saveTrack(Request $request)
     {
         $request->validate([
