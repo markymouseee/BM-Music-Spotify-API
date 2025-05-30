@@ -2,12 +2,19 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SpotifyController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/login', function () {
-    return view('pages.auth.login');
-})->name('login.index');
+Route::get('/login', [LoginController::class, 'index'])
+    ->name('login.index');
 
 Route::get('/', [DashboardController::class, 'index'])
     ->name('dashboard.index');
 
+Route::get('/auth/spotify', [SpotifyController::class, 'redirectToSpotify'])
+    ->name('spotify.redirect');
+
+Route::get('/auth/spotify/callback', [SpotifyController::class, 'handleSpotifyCallback']);
+
+Route::get('/spotify/top-tracks-ajax', [SpotifyController::class, 'fetchTopTracksAjax'])
+    ->name('spotify.top-tracks.ajax');

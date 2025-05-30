@@ -11,7 +11,11 @@ class LoginController extends Controller
 {
     public function index()
     {
-        return redirect()->intended(route('login.index'));
+        if (!Auth::check()) {
+            return view('pages.auth.login');
+        } else {
+            return redirect()->route('dashboard.index');
+        }
     }
 
     public function login(Request $request)
@@ -32,6 +36,7 @@ class LoginController extends Controller
             if (Hash::check($validation['password_login'], $user->password)) {
                 Auth::login($user);
                 return response()->json([
+                    'message' => 'Login successfully.',
                     'redirect' => route('dashboard.index')
                 ]);
             } else {

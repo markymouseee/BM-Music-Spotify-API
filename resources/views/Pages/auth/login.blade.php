@@ -31,13 +31,13 @@
                     @csrf
                     <div class="form-floating mb-3">
                         <input type="text" name="username_or_email" class="form-control rounded-3 border-0 shadow-sm"
-                            id="username_or_email" placeholder="Username or email" required>
+                            id="username_or_email" placeholder="Username or email">
                         <label for="username_or_email" class="text-secondary">Username or email</label>
                     </div>
 
                     <div class="form-floating mb-4">
                         <input type="password" name="password_login" class="form-control rounded-3 border-0 shadow-sm"
-                            id="password_login" placeholder="Password" required>
+                            id="password_login" placeholder="Password">
                         <label for="password_login" class="text-secondary">Password</label>
                     </div>
 
@@ -69,7 +69,7 @@
                 </div>
 
                 <div class="text-center mt-3">
-                    <a href="{{ url('/spotify/login') }}" class="btn btn-outline-success rounded-pill w-100">
+                    <a href="{{ route('spotify.redirect') }}" class="btn btn-outline-success rounded-pill w-100">
                         <svg width="20px" height="20px" viewBox="0 0 48 48" version="1.1"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -98,30 +98,28 @@
             $('#login-form').on('submit', async function(e) {
                 e.preventDefault();
 
-                const formData = {
-                    username_or_email: $('#username_or_email').val(),
-                    password_login: $('#password_login').val()
-                }
+                const formData = $(this).serializeArray().reduce((obj, item) => {
+                    obj[item.name] = item.value;
+                    return obj;
+                }, {});
 
                 try {
-                    const res = await fetch('/api/login', {
+                    const res = await fetch("/api/login", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
                             'X-CSRF-TOKEN': $('input[name="_token"]').val()
                         },
-
                         body: JSON.stringify(formData)
                     })
-
 
                     const data = await res.json();
 
                     if (res.ok) {
                         window.location.href = data.redirect;
                     } else {
-                        if (data.errors)[
+                        if (data.errors) {
                             Object.keys(data.errors).forEach((key) => {
                                 const inputs = $(`input[name="${key}"]`);
 
@@ -130,7 +128,16 @@
                                     inputs.next().text(data.errors[key][0]);
                                 }
                             })
-                        ]
+
+                        } else {
+                            console.log(data.message);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Login Failed',
+                                text: data.message || 'An error occurred during login.',
+                                confirmButtonText: 'OK'
+                            });
+                        }
                     }
                 } catch (error) {
                     console.error("Error: ", error);

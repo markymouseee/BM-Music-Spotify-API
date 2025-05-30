@@ -1,7 +1,7 @@
 @extends('app')
 
 @section('layout')
-   <nav class="navbar navbar-expand-lg position-sticky top-0 shadow-sm"
+    <nav class="navbar navbar-expand-lg position-sticky top-0 shadow-sm"
         style="background-color: rgba(34, 40, 49, 0.85); backdrop-filter: blur(5px); z-index: 1030;">
         <div class="container">
             <a class="navbar-brand text-light fw-bold fs-4" href="#">
@@ -22,31 +22,113 @@
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link fw-medium sign-up-link d-flex text-decoration-none align-items-center gap-1"
-                            href="#" data-bs-toggle="modal" data-bs-target="#sign-up-modal">
-                            <svg width="20" height="20" viewBox="0 0 32 32" version="1.1"
-                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-                                <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"
-                                    sketch:type="MSPage">
-                                    <g id="Icon-Set" sketch:type="MSLayerGroup"
-                                        transform="translate(-360.000000, -1087.000000)" fill="currentColor">
-                                        <path
-                                            d="M376,1117 C368.268,1117 362,1110.73 362,1103 C362,1095.27 368.268,1089 376,1089 C383.732,1089 390,1095.27 390,1103 C390,1110.73 383.732,1117 376,1117 L376,1117 Z M376,1087 C367.163,1087 360,1094.16 360,1103 C360,1111.84 367.163,1119 376,1119 C384.837,1119 392,1111.84 392,1103 C392,1094.16 384.837,1087 376,1087 L376,1087 Z M376.879,1096.46 C376.639,1096.22 376.311,1096.15 376,1096.21 C375.689,1096.15 375.361,1096.22 375.121,1096.46 L369.465,1102.12 C369.074,1102.51 369.074,1103.14 369.465,1103.54 C369.854,1103.93 370.488,1103.93 370.879,1103.54 L375,1099.41 L375,1110 C375,1110.55 375.447,1111 376,1111 C376.553,1111 377,1110.55 377,1110 L377,1099.41 L381.121,1103.54 C381.512,1103.93 382.145,1103.93 382.535,1103.54 C382.926,1103.14 382.926,1102.51 382.535,1102.12 L376.879,1096.46 L376.879,1096.46 Z"
-                                            id="arrow-up-circle" sketch:type="MSShapeGroup">
-
-                                        </path>
-                                    </g>
-                                </g>
-                            </svg>
-                            
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Dropdown
                         </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+                <form class="d-flex ms-5" role="search">
+                    <input class="form-control me-2" type="search" placeholder="Search song" aria-label="Search">
+                    <button class="btn btn-success" type="submit">Search</button>
+                </form>
+            </div>
+            <div class="dropdown cursor-pointer ms-2">
+                <a class="nav-link text-light d-flex align-items-center dropdown-toggle " data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    <img src="{{ asset('images/img.jpg') }}" alt="admin" class="rounded-circle" height="40"
+                        width="40">
+                    <strong class="ms-2">Mark</strong>
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <button class="dropdown-item text-danger" id="btn-logout">Log out</button>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <main class="flex-fill d-flex justify-content-center align-items-center py-5 ">
+        @yield('main-content')
+    </main>
+
+    <footer class="text-center
+        text-light py-3 mt-auto"
+        style="background-color: rgba(34, 40, 49, 0.85); backdrop-filter: blur(5px);">
+        <div>
+            <small>&copy; <span id="year"></span> BM Music. All rights reserved.</small>
+        </div>
+    </footer>
+    <script>
+        $(document).ready(function() {
+            handleLogout();
+        });
+
+        function handleLogout() {
+            $("#btn-logout").on('click', async function() {
+                Swal.fire({
+                        title: 'Are you sure?',
+                        icon: 'warning',
+                        text: 'You will be logged out',
+                        showCancelButton: true,
+                        confirmButtonColor: '#adb5bd',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, log out!'
+                    })
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '/api/logout',
+                                type: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(response) {
+                                    Swal.fire({
+                                        title: 'Logged out successfully',
+                                        icon: 'success',
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    }).then(() => {
+                                        window.location.href = response.redirect;
+                                    });
+                                },
+                                error: function(xhr, status, error) {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'Failed to log out. Please try again.',
+                                        icon: 'error'
+                                    });
+                                }
+                            })
+                        }
+                    })
+            })
+        }
+    </script>
 @endsection
