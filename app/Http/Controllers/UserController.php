@@ -12,7 +12,6 @@ class UserController extends Controller
         $validation = $request->validate([
             'name' => 'required|string|max:255',
             'username' => 'required|max:255|unique:users',
-            'email' => 'required|email|max:255|unique:users',
             'password' => 'required|min:8|confirmed:password_confirmation',
             'password_confirmation' => 'required|min:8|same:password',
         ], [
@@ -25,7 +24,6 @@ class UserController extends Controller
         $user = User::create([
             'name' => $validation['name'],
             'username' => $validation['username'],
-            'email' => $validation['email'],
             'password' => $passwordHashed,
         ]);
 
@@ -37,7 +35,7 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Account created successfully.',
-            'redirect' => route('login.index')
+            'redirect' => route('spotify.redirect')
         ]);
     }
 }

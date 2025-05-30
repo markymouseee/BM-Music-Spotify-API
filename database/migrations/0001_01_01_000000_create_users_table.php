@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('spotify_token_expires_at')->nullable();
             $table->string('name');
             $table->string('username')->unique();
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

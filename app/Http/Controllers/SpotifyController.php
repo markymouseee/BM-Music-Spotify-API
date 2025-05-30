@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SavedTrack;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -75,7 +76,6 @@ class SpotifyController extends Controller
         return response()->json(['success' => true, 'message' => 'Track saved!']);
     }
 
-
     public function handleSpotifyCallback(Request $request)
     {
         $code = $request->get('code');
@@ -88,33 +88,48 @@ class SpotifyController extends Controller
             'client_secret' => env('SPOTIFY_CLIENT_SECRET'),
         ]);
 
+        if (!$response->ok()) {
+            return redirect('/login')->with('error', 'Failed to authenticate with Spotify.');
+        }
 
         $accessToken = $response->json()['access_token'];
         $refreshToken = $response->json()['refresh_token'];
-
 
         $userResponse = Http::withHeaders([
             'Authorization' => 'Bearer ' . $accessToken,
         ])->get('https://api.spotify.com/v1/me');
 
+        if (!$userResponse->ok()) {
+            return redirect()->route('login.index')->with('error', 'Failed to fetch user profile from Spotify.');
+        }
+
         $spotifyUser = $userResponse->json();
 
-        $user = \App\Models\User::updateOrCreate(
-            ['spotify_id' => $spotifyUser['id']],
-            [
-                'name' => $spotifyUser['display_name'] ?? 'Spotify User',
-                'email' => $spotifyUser['email'],
-                'username' => $spotifyUser['id'],
-                'password' => bcrypt(str(16)),
+        $usercheck = User::where('email', $spotifyUser['email'])->first();
+
+        if ($usercheck) {
+            Auth::login($usercheck);
+            return redirect()->route('dashboard.index')->with('success', 'Logged in successfully.');
+        }
+
+        $user = User::whereNull('email')->first();;
+
+        if ($user) {
+            $update = $user->update([
+                'spotify_id' => $spotifyUser['id'],
                 'spotify_access_token' => $accessToken,
                 'spotify_refresh_token' => $refreshToken,
                 'spotify_token_expires_at' => now()->addSeconds($response->json()['expires_in']),
-            ]
-        );
+                'email' => $spotifyUser['email'],
+            ]);
 
-        Auth::login($user);
+            if ($update) {
+                return redirect()->route('login.index')->with('success', 'Spotify account linked successfully.');
+            }
+            return redirect()->route('login.index')->with('error', 'This Spotify account is not registered. Please sign up first.');
+        }
 
-        return redirect('/');
+        return redirect()->route('login.index')->with('error', 'This Spotify account is not registered. Please sign up first.');;
     }
 
 
