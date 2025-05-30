@@ -142,6 +142,7 @@ class SpotifyController extends Controller
                 'spotify_access_token' => $accessToken,
                 'spotify_refresh_token' => $refreshToken,
                 'spotify_token_expires_at' => now()->addSeconds($response->json()['expires_in']),
+                'profile_image' => $spotifyUser['images'][0]['url'],
                 'email' => $spotifyUser['email'],
             ]);
 

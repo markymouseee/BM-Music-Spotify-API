@@ -1,7 +1,8 @@
 @extends('layout.authenticated-layout')
 
 @section('title', 'Dashboard - BM Music')
-
+@section('usersname', $user->name)
+@section('profile', $user->profile_image)
 @section('main-content')
     <div class="container-fluid py-4 px-5" style="height: 100vh;">
         <h2 class="text-light mb-4 fw-bold"><i class="bi bi-music-note-beamed"></i> Spotify Tracks</h2>

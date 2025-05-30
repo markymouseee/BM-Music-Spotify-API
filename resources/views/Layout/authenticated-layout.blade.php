@@ -32,9 +32,9 @@
                 <div class="dropdown cursor-pointer ms-2">
                     <a class="nav-link text-light d-flex align-items-center dropdown-toggle " data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <img src="{{ asset('images/img.jpg') }}" alt="admin" class="rounded-circle" height="40"
-                            width="40">
-                        <strong class="ms-2">Mark</strong>
+                        <img src="@yield('profile')" alt="admin" class="rounded-circle" height="40" width="40">
+
+                        <strong class="ms-2">@yield('usersname')</strong>
                     </a>
 
                     <ul class="dropdown-menu">

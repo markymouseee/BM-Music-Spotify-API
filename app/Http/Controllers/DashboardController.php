@@ -12,6 +12,7 @@ class DashboardController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             return view('pages.authenticated.dashboard', [
+                'user' => $user,
                 'spotifyAccessToken' => $user->spotify_access_token
             ]);
         } else {

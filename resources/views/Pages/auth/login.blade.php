@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="form-floating mb-4">
-                        <input type="pass" name="pass" class="form-control rounded-3 border-0 shadow-sm"
+                        <input type="password" name="pass" class="form-control rounded-3 border-0 shadow-sm"
                             id="pass" placeholder="Pass">
                         <label for="pass" class="text-secondary">Password</label>
                     </div>
@@ -138,26 +138,33 @@
                         window.location.href = data.redirect;
                     } else {
                         if (data.errors) {
-                            Object.keys(data.errors).forEach((key) => {
-                                const inputs = $(`input[name="${key}"]`);
+                            Object.keys(data.errors).forEach(key => {
+                                const inputFields = $(`input[name="${key}"]`);
 
-                                if (inputs.length) {
-                                    inputs.addClass('is-invalid');
-                                    inputs.next().text(data.errors[key][0]);
+                                if (inputFields.length) {
+                                    inputFields.addClass('is-invalid');
+                                    inputFields.next('.invalid-feedback').remove();
+                                    inputFields.after(
+                                        `<div class="invalid-feedback">${data.errors[key][0]}</div>`
+                                    );
                                 }
                             })
-
                         } else {
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Login Failed',
-                                text: data.message || 'An error occurred during login.',
-                                confirmButtonText: 'OK'
-                            });
+                                title: 'Error',
+                                text: data.message || 'An error occurred. Please try again later.',
+                            })
                         }
                     }
                 } catch (error) {
-                    console.error("Error: ", error);
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Login Failed',
+                        text: 'An unexpected error occurred. Please try again later.',
+                        confirmButtonText: 'OK'
+                    });
                 }
             })
         }
