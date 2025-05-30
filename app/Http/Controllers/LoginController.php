@@ -18,10 +18,10 @@ class LoginController extends Controller
     {
         $validation = $request->validate([
             'username_or_email' => 'required',
-            'password' => 'required',
+            'password_login' => 'required',
         ], [
             'username_or_email.required' => 'Username or email is required.',
-            'password.required' => 'Password is required.',
+            'password_login.required' => 'Password is required.',
         ]);
 
         $user = User::where('username', $validation['username_or_email'])
@@ -29,10 +29,10 @@ class LoginController extends Controller
             ->firstOrFail();
 
         if ($user) {
-            if (Hash::check($validation['password'], $user->password)) {
+            if (Hash::check($validation['password_login'], $user->password)) {
                 Auth::login($user);
                 return response()->json([
-                    'redirect' => route('')
+                    'redirect' => route('dashboard.index')
                 ]);
             } else {
                 return response()->json([

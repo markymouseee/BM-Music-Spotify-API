@@ -30,15 +30,15 @@
                 <form id="login-form">
                     @csrf
                     <div class="form-floating mb-3">
-                        <input type="text" name="username" class="form-control rounded-3 border-0 shadow-sm"
-                            id="username" placeholder="Username or email" required>
-                        <label for="username" class="text-secondary">Username or email</label>
+                        <input type="text" name="username_or_email" class="form-control rounded-3 border-0 shadow-sm"
+                            id="username_or_email" placeholder="Username or email" required>
+                        <label for="username_or_email" class="text-secondary">Username or email</label>
                     </div>
 
                     <div class="form-floating mb-4">
-                        <input type="password" name="password" class="form-control rounded-3 border-0 shadow-sm"
-                            id="password" placeholder="Password" required>
-                        <label for="password" class="text-secondary">Password</label>
+                        <input type="password" name="password_login" class="form-control rounded-3 border-0 shadow-sm"
+                            id="password_login" placeholder="Password" required>
+                        <label for="password_login" class="text-secondary">Password</label>
                     </div>
 
                     <div class="d-grid">
@@ -91,16 +91,50 @@
 
     <script>
         $(document).ready(() => {
-
+            handleLogin();
         });
 
         function handleLogin() {
             $('#login-form').on('submit', async function(e) {
                 e.preventDefault();
 
-                const formData = $(this).serialize();
+                const formData = {
+                    username_or_email: $('#username_or_email').val(),
+                    password_login: $('#password_login').val()
+                }
 
-                const response = await fetch('')
+                try {
+                    const res = await fetch('/api/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': $('input[name="_token"]').val()
+                        },
+
+                        body: JSON.stringify(formData)
+                    })
+
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        window.location.href = data.redirect;
+                    } else {
+                        if (data.errors)[
+                            Object.keys(data.errors).forEach((key) => {
+                                const inputs = $(`input[name="${key}"]`);
+
+                                if (inputs.length) {
+                                    inputs.addClass('is-invalid');
+                                    inputs.next().text(data.errors[key][0]);
+                                }
+                            })
+                        ]
+                    }
+                } catch (error) {
+                    console.error("Error: ", error);
+                }
             })
         }
     </script>
