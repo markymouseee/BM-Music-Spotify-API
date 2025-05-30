@@ -4,5 +4,5 @@
 
 
 @section('main-content')
-
+    <div></div>
 @endsection
