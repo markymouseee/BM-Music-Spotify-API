@@ -30,3 +30,10 @@ Route::get('/spotify/saved-tracks',  [SpotifyController::class, 'showSavedTracks
 
 Route::delete('/spotify/saved-tracks/{id}', [SpotifyController::class, 'deleteSavedTrack'])
     ->name('spotify.saved.track.delete');
+
+Route::get('/profile', [DashboardController::class, 'profile'])
+    ->name('dashboard.profile');
+
+
+Route::put('/profile/{id}', [DashboardController::class, 'update'])
+    ->name('dashboard.profile.update');

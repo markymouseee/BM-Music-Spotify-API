@@ -117,11 +117,9 @@
 
             player.connect();
 
-            // Playback control buttons
             $('#pause-btn').click(() => player.pause());
             $('#resume-btn').click(() => player.resume());
 
-            // Progress bar update
             setInterval(() => {
                 if (!player || !currentTrackDuration) return;
                 player.getCurrentState().then(state => {
@@ -148,7 +146,6 @@
                         const progressPercent = (state.position / currentTrackDuration) * 100;
                         $('#progress-bar').css('width', `${progressPercent}%`);
 
-                        // ⏱ Update time display
                         $('#current-time').text(formatTime(state.position));
                         $('#total-time').text(formatTime(currentTrackDuration));
                     }

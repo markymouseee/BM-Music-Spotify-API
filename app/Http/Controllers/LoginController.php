@@ -28,6 +28,12 @@ class LoginController extends Controller
             'pass.required' => 'Password is required.',
         ]);
 
+        $checkuser = User::whereNull('spotify_id')->first();
+
+        if ($checkuser) {
+           return redirect('/login')->with('error', 'Please link your Spotify account first.');
+        }
+
         $user = User::where('username', $validation['username_or_email'])
             ->orWhere('email', $validation['username_or_email'])
             ->first();

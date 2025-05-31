@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Log;
 
 class SpotifyController extends Controller
@@ -51,7 +50,7 @@ class SpotifyController extends Controller
         $savedTracks = $user->savedTracks;
         $spotifyAccessToken = $user->spotify_access_token; // Assuming a hasMany relationship
 
-        return view('pages.authenticated.savetrack', compact('savedTracks', 'spotifyAccessToken'));
+        return view('pages.authenticated.savetrack', compact('savedTracks', 'spotifyAccessToken', 'user'));
     }
 
     public function deleteSavedTrack($id)

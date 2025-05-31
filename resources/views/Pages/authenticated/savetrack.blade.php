@@ -2,6 +2,9 @@
 
 @section('title', 'Saved tracks - BM Music')
 
+@section('profile', $user->profile_image)
+@section('usersname', $user->name)
+
 @section('main-content')
     <div class="container-fluid py-4 px-5" style="min-height: 100vh;">
         <h2 class="text-light mb-4 fw-bold"><i class="bi bi-bookmark"></i> Saved Tracks</h2>
