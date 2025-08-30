@@ -2,9 +2,9 @@
 
 Clone the repo:
 ```sh
-git clone https://github.com/markymouseee/final-exam.git
+git clone https://github.com/markymouseee/BM-Music-Spotify-API.git
 
-cd final-exam
+cd BM-Music-Spotify-API
 
 composer install
 
